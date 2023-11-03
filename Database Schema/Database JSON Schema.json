@@ -1,0 +1,88 @@
+// I currently have this as 1 big object, but tbh I'd probably prefer it as individual ones
+//I'm mainly sending it as 1 so I only have to send 1 file.
+// So if it's a huge pain to split them, def keep it as 1, I'm sure we can pull stuff out later to add to the database
+// But if you could make each individual file from one generation that'd be huge
+// Thank you for switching this all up, I know it's annoying to constantly change this
+
+{
+    "ProfessorOfficeHours":{//Prof Office Hours
+    "Professor": "Professor Name",
+    "Monday": "OpenTime-CloseTime OpenTime-CloseTime",
+
+    "Tuesday": "OpenTime-CloseTime OpenTime-CloseTime",
+
+    "Wednesday": "OpenTime-CloseTime",
+
+    "Thursday" : null,
+
+    "Friday": "OpenTime-CloseTime OpenTime-CloseTime",
+
+    "Saturday": null,
+
+    "Sunday" : "OpenTime-CloseTime OpenTime-CloseTime OpenTime-CloseTime"
+    },
+
+
+
+
+    "StudentRankChoice":{//Rank Choice Voting
+        "StudentID": "########",
+
+        "FisrstChoice": "OpenTime-CloseTime",
+
+        "SecondChoice": "OpenTime-CloseTime",
+
+        "ThirdChoice": "OpenTime-CloseTime"
+    },
+
+
+    "StudentClassSchedule": {//Student Class Schedule
+        "StudentID": "########",
+
+        "Monday": "OpenTime-CloseTimeXclassName OpenTime-CloseTimeXclassName",
+
+        "Tuesday": "OpenTime-CloseTimeXclassName",
+
+        "Wednesday": "OpenTime-CloseTimeXclassName OpenTime-CloseTimeXclassName",
+
+        "Thursday" : null,
+
+        "Friday": "OpenTime-CloseTimeXclassName OpenTime-CloseTimeXclassName",
+
+        "Saturday": null,
+
+        "Sunday" : null
+    },
+
+    "StudentAvailibleTime"{//Student Availible Time
+
+        "StudentID": "########",
+
+        "Monday": "OpenTime-CloseTime OpenTime-CloseTime OpenTime-CloseTime",
+
+        "Tuesday": "OpenTime-CloseTime OpenTime-CloseTime",
+
+        "Wednesday": "OpenTime-CloseTime OpenTime-CloseTime OpenTime-CloseTime",
+
+        "Thursday" : "OpenTime-CloseTime",
+
+        "Friday": "OpenTime-CloseTime OpenTime-CloseTime OpenTime-CloseTime",
+
+        "Saturday": "OpenTime-CloseTime",
+
+        "Sunday" : "OpenTime-CloseTime"
+
+    },
+
+
+
+
+    "StudentInfo":{//Student Info 
+
+        "StudentID" : "######",
+
+        "Name" : "John Doe",
+
+        "Password" : "ABCD1234"
+    }
+}

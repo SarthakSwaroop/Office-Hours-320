@@ -1,0 +1,49 @@
+Professor Open Office Hours
+
+Have all times for each day be in 1 string, separate start and end times with "-" and different sessions with " "
+
+If there are no times for a day, assign that day null
+
+Each row will have a primary key of the professors name
+
+
+-----------------
+Student Rank Choice Voting
+
+
+Using student ID for now, subject to change based on how we do authentication
+
+Assuming students can select their top 3 selections (changing this shouldn't be hard) 
+
+These times should obviously match up with those given by their professor
+
+
+
+
+
+------------------
+Student Class Schedule
+
+OpenTime
+then a dash to split the two times
+CloseTime
+then an X
+then the name of the class
+and then a space if there is another class after
+
+OpenTime-CloseTimeXclassName
+
+null if there are no classes on that day
+
+
+-------------------
+Student Availible Time
+
+Same structure as prof office hours, this time obviously shouldn't conflict with their free time
+
+
+-------------------
+
+Student Info
+
+The login info is still subject to change, but for now it'll just store ID, Name, and Password
