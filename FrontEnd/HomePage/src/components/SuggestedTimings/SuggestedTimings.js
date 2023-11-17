@@ -1,9 +1,8 @@
 import React from 'react';
 import './SuggestedTimings.css';
-import CalendarIcon from '../../assets/icons/calender2.svg'; // Make sure the path is correct
+import CalendarIcon from '../../assets/icons/calender2.svg'; 
 
 function SuggestedTimings() {
-  // Replace this with your actual data source
   const suggestedTimings = [
     {
       courseId: 'CS 320',
@@ -12,8 +11,6 @@ function SuggestedTimings() {
         { day: 'Wednesday', hours: ['09:00 - 11:00', '14:00 - 16:00'] },
       ],
     },
-
-    // ... more courses ...
   ];
 
   return (
