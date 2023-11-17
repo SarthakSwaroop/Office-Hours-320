@@ -1,0 +1,66 @@
+.office-hours-list {
+  background-color: #fff;
+  border: 1px solid #cbcacab5; 
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin: 0 50px;
+  margin-top: -40px;
+}
+
+.office-hour-entry {
+  padding: 10px 0;
+  margin-bottom: 10px; 
+  border-bottom: 1px solid #cbcacab5;
+}
+.office-hour {
+  margin-bottom: 10px; 
+}
+
+.office-hour-entry:last-child {
+  border-bottom: none;
+}
+
+.office-hour-date {
+  font-weight: bold;
+  margin-bottom: 5px; 
+  padding-left: 20px; 
+}
+
+.office-hour-details {
+  display: flex;
+  align-items: center;
+  padding-left: 20px; 
+}
+
+.office-hour-time {
+  font-weight: italic;
+  display: flex;
+  align-items: center;
+  margin-right: 10px; 
+}
+
+.calendar-icon {
+  margin-left: 8px;
+  width: 30px;
+  height: 30px;
+}
+
+ .office-hour-course {
+  margin-right: 16px; 
+  font-style: italic;
+}
+.office-hour-professor{
+  margin-right: 16px;
+  font-weight: bold;
+}
+
+.modify-button {
+  background-color: #1a73e8; 
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: auto; 
+}
