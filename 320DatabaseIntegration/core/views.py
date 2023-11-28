@@ -12,7 +12,7 @@ class loginView(APIView):
     # Maybe serializer stuff???
 
     def post(self,request, info): 
-        return DBCalls.login(info.email,info.password)#Figure out how exactly to pass stuff in???
+        return DBCalls.login(info.email,info.password)#If this is true, login sucessfully and move to the next page, if not display an error
     
 
 

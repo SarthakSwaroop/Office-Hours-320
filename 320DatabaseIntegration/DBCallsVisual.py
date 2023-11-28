@@ -29,7 +29,7 @@ while not_done:
     if choice == 'X' or choice == 'x':
         break
     elif choice == '1':
-        result = DBCalls.get_emails();
+        result = dbconn.get_emails();
         print(result)
 
 
