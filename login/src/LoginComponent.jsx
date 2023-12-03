@@ -20,8 +20,13 @@ const LoginComponent = () => {
         password
       });
       // Handle response here. For example, saving the token and redirecting
-      console.log(response.data);
-      navigate('/HomePage'); // Redirect to dashboard upon successful login
+      if(response.data){
+        navigate('/HomePage'); // Redirect to dashboard upon successful login
+      }
+      else{
+        console.log("incorrect email and password");
+        //display a text box or something
+      }
     } catch (err) {
       // Handle error here. For example, displaying an error message
       setError(err.response.data.message || 'An error occurred');
