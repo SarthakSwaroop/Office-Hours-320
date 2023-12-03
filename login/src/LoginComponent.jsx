@@ -20,7 +20,7 @@ const LoginComponent = () => {
         password
       });
       // Handle response here. For example, saving the token and redirecting
-      if(response.data){
+      if(response.data.find(obj => obj.email === email && obj.password === password)){
         navigate('/HomePage'); // Redirect to dashboard upon successful login
       }
       else{
