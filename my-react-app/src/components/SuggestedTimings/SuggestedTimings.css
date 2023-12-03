@@ -1,0 +1,72 @@
+.suggested-timings-container {
+  background-color: #fff;
+  border: 1px solid #cbcacab5; 
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 0 50px; 
+  margin-top: 40px;
+}
+
+.subtitle {
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.course-timings {
+  margin-bottom: 20px;
+}
+
+.course-id {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-left: 20px; 
+
+}
+
+.time-slot {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  padding-left: 20px; 
+}
+
+.calendar-icon {
+  margin-right: 8px;
+  width: 30px;
+  height: 30px; 
+}
+
+.day {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.hours {
+  white-space: nowrap; 
+  padding-left: 20px;
+}
+
+.course-timings:last-child .time-slot:last-child {
+  margin-bottom: 0;
+}
+.header-container {
+  display: flex; 
+  align-items: center; 
+  justify-content: start; 
+  margin-bottom: 20px; 
+}
+
+.header-title {
+  margin-right: 10px; 
+  font-size: 1.25em; 
+  font-weight: bold;
+}
+
+.header-subtitle {
+  font-size: 1em; 
+  font-style: italic;
+  padding-left: 30px;
+}
