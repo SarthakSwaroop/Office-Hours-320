@@ -1,0 +1,10 @@
+{% block content %}
+  <h2>Student Rankings</h2>
+  <ul>
+    {% for student in students %}
+      <li>{{ student.email }}: {{ student.first }}</li>
+    {% empty %}
+      <li>No students available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

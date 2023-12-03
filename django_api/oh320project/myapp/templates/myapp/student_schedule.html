@@ -1,0 +1,10 @@
+{% block content %}
+  <h2>Student Schedule</h2>
+  <ul>
+    {% for student in students %}
+      <li>{{ student.email }}: {{ student.monday }}</li>
+    {% empty %}
+      <li>No students available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
