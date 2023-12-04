@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './SuggestedTimings.css';
-import CalendarIcon from '../../assets/icons/calender2.svg'; 
+import CalendarIcon from '../../assets/icons/calender2.svg';
 
 function SuggestedTimings() {
-  const suggestedTimings = [
-    {
-      courseId: 'CS 320',
-      times: [
-        { day: 'Monday', hours: ['09:00 - 11:00', '13:00 - 15:00', '17:30 - 18:30'] },
-        { day: 'Wednesday', hours: ['09:00 - 11:00', '14:00 - 16:00'] },
-      ],
-    },
-  ];
+  const [suggestedTimings, setSuggestedTimings] = useState([]);
+
+  useEffect(() => {
+    const fetchSuggestedTimings = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/suggested-timings');
+        setSuggestedTimings(response.data);
+      } catch (error) {
+        console.error('Error fetching suggested timings:', error);
+        // Handle error here (e.g., show user feedback)
+      }
+    };
+
+    fetchSuggestedTimings();
+  }, []);
 
   return (
     <div className="suggested-timings-container">
