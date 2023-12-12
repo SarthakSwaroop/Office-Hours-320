@@ -1,9 +1,12 @@
 from collections import Counter
 import random
 import pandas as pd
+from flask import Flask, jsonify
+app = Flask(__name__)
+
 
 '''Function to find popular times for office hours'''   
-def find_common_times(availability, rankings, n, m, ranking_weight=1):
+def find_common_times(availability, rankings, n, ranking_weight=1):
     all_times = []
     for student_time in availability:
         all_times.extend(student_time)
@@ -11,8 +14,8 @@ def find_common_times(availability, rankings, n, m, ranking_weight=1):
     # hash the frequency of each time
     time_counts = Counter(all_times)
     
-    # return the n most popular times with at least m students attending
-    common_times = [time for time, count in time_counts.most_common(n) if count >= m]
+    # return the n most popular times 
+    common_times = [time for time, count in time_counts.most_common(n)]
     
     # sort common_times by cumulative ranking
     common_times_rankings = {}
@@ -56,110 +59,134 @@ def modify_format(file_path):
             df.at[index, column] = new_value
     return df
 
-'''Input data'''
-# Read data into dataframe from csv file
-df1 = modify_format("Student_Availability.csv")
-df2 = pd.read_csv("Student_Rankings.csv")
-df2 = df2.drop(df2.columns[0], axis=1)
+#Find the number of students attending at least one of the office hours in the input schedule
+def percent_coverage(df1,schedule):
+    num_students = 0
+    for index, row in df1.iterrows():
+        if any(element in row.values for element in schedule):
+            num_students += 1
+    return num_students/len(df1)*100
+
+##############################################################################################################################
 
 '''Function to compute most popular office hours times (with parameterized ranking weight)'''
-# Call function to return n most common times with at least m students attending, using data from df1 and df2
-map1, availability = map_times_to_array(df1)
-map2, rankings = map_times_to_array(df2)
-#print("Availabilities:",availability) 
-#print("Rankings:",rankings)
-n = 12
-m = 4
-common_times, time_counts = find_common_times(availability, rankings, n, m, ranking_weight=1)
-print("Recommended Times (hashed)",common_times)
+# Call function to return n most common times, using data from df1 and df2
+def most_pop(df1,df2,n,ranking_weight=1):
+    map1, availability = map_times_to_array(df1)
+    map2, rankings = map_times_to_array(df2)
+    #print("Availabilities:",availability) 
+    #print("Rankings:",rankings)
+    # number of office hours to recommend
+    common_times, time_counts = find_common_times(availability, rankings, n, ranking_weight)
+    #print("Recommended Times (hashed)",common_times)
 
-# Run inverse of hash function to get the original time strings
-inverse_hash_times = {v: k for k, v in map1.items()}
-common_times_original = [inverse_hash_times[time] for time in common_times]
+    # Run inverse of hash function to get the original time strings
+    inverse_hash_times = {v: k for k, v in map1.items()}
+    common_times_original = [inverse_hash_times[time] for time in common_times]
 
-print("Recommended Times (time strings)",common_times_original)
-print("Frequency of each time:",[time_counts[time] for time in common_times])
-print("Suggested popular schedule")
-print(common_times_original[:n//3])
+    #print("Recommended Times (time strings)",common_times_original)
+    #print("Frequency of each time:",[time_counts[time] for time in common_times])
+    #print("Suggested popular schedule")
+    #print(common_times_original)
+    return common_times_original
+
 
 '''Function to compute most popular office hours times with timings spread out across the week'''
 # Spread out times so that the office hour schedule is spread out across the week
-days = [i.split(" ") for i in common_times_original]
-filtered_days = [day for i, day in enumerate(days) if day[0] not in [d[0] for d in days[:i]]]
-joined_days = [' '.join(day) for day in filtered_days]
-print("Suggested popular + uniformly spread out schedule")
-print(joined_days[:n//3])
+def spread_out(df1,df2,n):
+    common_times_original = most_pop(df1,df2,2*n)
+    days = [i.split(" ") for i in common_times_original]
+    filtered_days = [day for i, day in enumerate(days) if day[0] not in [d[0] for d in days[:i]]]
+    joined_days = [' '.join(day) for day in filtered_days]
+    #add top n - len(joined_days) top times from common_times_original which is not already in joined_days to the end of the schedule
+    for time in common_times_original:
+        if time not in joined_days:
+            joined_days.append(time)
+        if len(joined_days) == n:
+            break
+    #print("Suggested popular + uniformly spread out schedule")
+    #print(joined_days[:n])
+    return joined_days[:n]
 
-'''Function to compute office hours schedule which maximizes students attending at least one office hour (no ranking weight)'''
-all_times = []
-for student_time in availability:
-    all_times.extend(student_time)
 
-# read from csv file and make a list of all unique time slots
-df = pd.read_csv("Student_Availability.csv")
-df = df.drop(df.columns[0], axis=1)
-column_names = df.columns.tolist()
-for index, row in df.iterrows():
-    for column in df.columns:
-        new_value = f"{column} {row[column]}"
-        df.at[index, column] = new_value
-all_times = df.values.flatten().tolist()
-all_times = list(set(all_times))
-print("All times:",len(all_times))
-
-# Read availability from CSV file
-availability_df = pd.read_csv("Student_Availability.csv")
-availability_df = availability_df.drop(availability_df.columns[0], axis=1)
-# for each element x in column c, modify x to be "c x"
-for column in availability_df.columns:
-    for index, row in availability_df.iterrows():
-        new_value = f"{column} {row[column]}"
-        availability_df.at[index, column] = new_value
-print("Availibility:", availability_df)
-
-#Find the number of students attending at least one of the office hours in the input schedule
-def percent_coverage(availability_df,schedule):
-    num_students = 0
-    for index, row in availability_df.iterrows():
-        if any(element in row.values for element in schedule):
-            num_students += 1
-    return num_students/len(availability_df)*100
-
-# try all possible combinations of n unique office hours by sampling several time and return the schedule with the most students attending at least one office hour
-def find_best_schedule(availability_df,all_times,n):
+'''Heuristic Function to compute office hours schedule which maximizes students attending at least one office hour (no ranking weight)'''
+# try several combinations of n unique office hours by sampling several time and return the schedule with the most students attending at least one office hour
+def find_best_schedule(df1,n):
+    # make a list of all unique time slots
+    all_times = df1.values.flatten().tolist()
+    all_times = list(set(all_times))
+    #print("All times length:",len(all_times))
     best_schedule = []
-    best_num_students = 0
-    for i in range(100):
+    best_percent_students = 0
+    for i in range(1000):
         schedule = random.sample(all_times,n)
-        num_students = percent_coverage(availability_df,schedule)
-        if num_students > best_num_students:
+        percent_students = percent_coverage(df1,schedule)
+        if percent_students > best_percent_students:
             best_schedule = schedule
-            best_num_students = num_students
-    return best_schedule, best_num_students
+            best_percent_students = percent_students
+    return best_schedule
 
-print(find_best_schedule(availability_df,all_times,n//3))
+
+##############################################################################################################################
 
 '''HOW TO RUN'''
+
+print("SAMPLE INPUT")
+# Read data into dataframe from csv file
+df1 = modify_format("Student_Availability.csv") #modify file name if needed
+df2 = pd.read_csv("Student_Rankings.csv") #modify file name if needed
+df2 = df2.drop(df2.columns[0], axis=1)
+n = 5 # number of office hours to recommend
+ranking_weight = 1 # weight to give to student rankings when computing most popular office hours times
+print("Number of office hours to recommend:", n)
+print("Ranking weight:", ranking_weight)
 
 print("")
 print("SAMPLE OUTPUT")
 print("")
 
 # The following code generates 3 different office hour schedules
-# The first schedule generates the most popular office hour times with at least 4 students attending
+# The first schedule generates the n most popular office hour times 
 print("Most Popular Times:")
-print(common_times_original[:n//3])
-print("Percentage of students covered:", round(percent_coverage(availability_df, common_times_original[:n//3]), 2))
+temp1 = most_pop(df1,df2,n,ranking_weight)
+print(temp1)
+print("Percentage of students covered:", round(percent_coverage(df1,temp1), 2))
 print("")
 
 
-# The second schedule generates the most popular office hour times with at least 4 students attending, and spread out across the week
+# The second schedule generates the n most popular office hour times which are spread out across the week
 print("Most Popular Times spread out across the Week:")
-print(joined_days[:n//3])
-print("Percentage of students covered:", round(percent_coverage(availability_df, joined_days[:n//3]), 2))
+temp2 = spread_out(df1,df2,n)
+print(temp2)
+print("Percentage of students covered:", round(percent_coverage(df1,temp2), 2))
 print("")
 
 # The third schedule generates the office hour schedule which maximizes students attending at least one office hour (no ranking weight)
 print("Most Popular Times with Most Students Covered:")
-print(find_best_schedule(availability_df, all_times, n//3)[0])
-print("Percentage of students covered:", round(percent_coverage(availability_df, find_best_schedule(availability_df, all_times, n//3)[0]), 2))
+temp3 = find_best_schedule(df1, n)
+print(temp3)
+print("Percentage of students covered:", round(percent_coverage(df1, temp3), 2))
+
+'''API endpoints'''
+
+@app.route('/most_popular_times')
+def get_most_popular_times(df1, df2, n, ranking_weight=1):
+    temp1 = most_pop(df1, df2, n, ranking_weight)
+    return jsonify(temp1,round(percent_coverage(df1,temp1), 2))
+
+@app.route('/spread_out_times')
+def get_spread_out_times(df1, df2, n):
+    temp2 = spread_out(df1, df2, n)
+    return jsonify(temp2,round(percent_coverage(df1,temp2), 2))
+
+@app.route('/best_schedule')
+def get_best_schedule(df1, n):
+    temp3 = find_best_schedule(df1, n)
+    return jsonify(temp3,round(percent_coverage(df1,temp3), 2))
+
+if __name__ == '__main__':
+    # Read data into dataframe from csv file
+    df1 = modify_format("Student_Availability.csv") #modify file name if needed
+    df2 = pd.read_csv("Student_Rankings.csv") #modify file name if needed
+    df2 = df2.drop(df2.columns[0], axis=1)
+    app.run()
